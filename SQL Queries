@@ -1,0 +1,36 @@
+#  How many types of Acacia plants can be found in the taxonomy table of the dataset
+SELECT COUNT(*) AS acacia_types
+FROM taxonomy
+WHERE species LIKE 'Acacia%'
+   OR tax_string LIKE '%Acacia%';
+
+# Which type of wheat has the longest DNA sequence
+SELECT
+    t.species,
+    r.rfamseq_acc,
+    r.length
+FROM rfamseq AS r
+JOIN taxonomy AS t
+    ON r.ncbi_id = t.ncbi_id
+WHERE t.species LIKE '%Triticum%'
+   OR t.tax_string LIKE '%Triticum%'
+ORDER BY r.length DESC
+LIMIT 1;
+
+# We want to paginate a list of the family names and their longest DNA sequence lengths (in descending order of length) where only families that have DNA sequence lengths greater than 1,000,000 are included. Give a query that will return the 9th page when there are 15 results per page
+SELECT
+    f.rfam_acc,
+    f.rfam_id,
+    MAX(rs.length) AS max_length
+FROM family AS f
+JOIN full_region AS fr
+    ON f.rfam_acc = fr.rfam_acc
+JOIN rfamseq AS rs
+    ON fr.rfamseq_acc = rs.rfamseq_acc
+GROUP BY
+    f.rfam_acc,
+    f.rfam_id
+HAVING MAX(rs.length) > 1000000
+ORDER BY
+    max_length DESC
+LIMIT 15 OFFSET 120;
