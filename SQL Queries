@@ -1,5 +1,5 @@
 #  How many types of Acacia plants can be found in the taxonomy table of the dataset
-SELECT COUNT(*) AS acacia_types
+SELECT COUNT(DISTINCT species) AS acacia_types
 FROM taxonomy
 WHERE species LIKE 'Acacia%'
    OR tax_string LIKE '%Acacia%';
